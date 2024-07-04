@@ -88,8 +88,22 @@ void drawFood(Vector2* food, Color c) {
     
 }
 
-void eatFood() {
-
+void eatFood(Vehicle* vehic, Vector2* food) {
+    float mindist = INFINITY;
+    int idx = -1;
+    for (size_t i = 0; i < dynarr_len(food); i++) {
+        float distance = vec2_dist(vehic->location, food[i]);
+        if ( distance < mindist) {
+            mindist = distance;
+            idx = i;
+        }     
+    }
+    if (idx > -1) {
+        seek(vehic, food[idx]);
+        if (vec2_dist(vehic->location, food[idx]) < 3) {
+            dynarr_pop(food, idx);
+        }
+    }
 }
 
 int main() {
@@ -98,20 +112,21 @@ int main() {
     InitWindow(screenWidth, screenHeight, "seeking and arrive");
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
 
-    Target target = createTarget(800, 600, 200);
     Vehicle mover = createVehicle(100, 400, 20);
-    mover.velocity = (Vector2){12, -8};    
-    Vector2* food = createFood(15);
+    mover.velocity = (Vector2){5, -1};    
+    Vector2* food = createFood(3);
     
     while (!WindowShouldClose()) {
         BeginDrawing();
-        seek(&mover, target.location);
+        
+        eatFood(&mover, food);
         updateVehicle(&mover);
+        
         ClearBackground(DARKBLUE);
         drawVehicle(&mover, LIGHTGRAY);
-        //drawTarget(&target, GREEN);
         drawFood(food, GREEN);
-    	EndDrawing();
+    	
+        EndDrawing();
     }
 
     CloseWindow();   

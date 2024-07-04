@@ -1,0 +1,25 @@
+#include "lib_core.h"
+
+
+int main() {
+
+    int* numbers = dynarr_create(10, int);
+    int val0 = 10;
+    int val1 = 20;
+    int val2 = 30;
+
+    dynarr_append(numbers, val0);
+    //dynarr_append(numbers, val1);
+    //dynarr_append(numbers, val2);
+    for (int i = 0; i < dynarr_len(numbers); i++) {
+        printf("Val[%i], %i \n", i, numbers[i]);
+    }
+
+    dynarr_pop(numbers, 0);
+
+    for (int i = 0; i < dynarr_len(numbers); i++) {
+        printf("Nach Push(0) Val[%i], %i \n", i, numbers[i]);
+    }
+    
+    return 0;
+}
