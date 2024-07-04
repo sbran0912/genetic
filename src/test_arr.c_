@@ -1,0 +1,25 @@
+#include "lib_core.h"
+
+
+int main() {
+
+    int* numbers = arr_init(10, sizeof(int));
+    int val0 = 10;
+    int val1 = 20;
+    int val2 = 30;
+
+    arr_append(&numbers, &val0);
+    arr_append(&numbers, &val1);
+    arr_append(&numbers, &val2);
+    for (int i = 0; i < arr_len(&numbers); i++) {
+        printf("Val[%i], %i \n", i, numbers[i]);
+    }
+
+    arr_push(&numbers, 1);
+
+    for (int i = 0; i < arr_len(&numbers); i++) {
+        printf("Nach Push(0) Val[%i], %i \n", i, numbers[i]);
+    }
+    
+    return 0;
+}
