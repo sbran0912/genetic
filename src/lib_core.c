@@ -25,38 +25,6 @@ float map_num(float n, float range_old, float range_new) {
   return (n / range_old * range_new);
 }
 
-List list_create(size_t capacity, size_t size) {
-    return (List){.array = malloc(capacity * size), .capacity = capacity, .size =  size, .count = 0};
-}
-
-void list_append(List* l, void* val) {
-    l->count++;
-    if ((l->count) > (l->capacity)) {
-        l->capacity = l->capacity + 10;
-        l->array = realloc(l->array, l->capacity * l->size);
-    }
-    char* new_val = l->array + ((l->count-1) * l->size);   //count 1 = index 0, count 2 = index 1 etc.
-    memcpy(new_val, val, l->size);
-
-}
-
-void* list_at(List* l, int index) {
-    char* val = l->array + (index * l->size);
-    return (void*)val;
-}
-
-void list_free(List* l) {
-    free(l->array);
-    l->array = NULL;
-}
-
-void list_reduce(List* l) {    
-    if (l->count < l->capacity) {
-        l->capacity = l->count;   //Kapazität auf Länge setzen
-        l->array = realloc(l->array, l->capacity * l->size);
-    }
-}
-
 ListStr lists_create(size_t capacity) {
     return (ListStr){.array = malloc(capacity * sizeof(char*)), .capacity = capacity, .count = 0};
 }
@@ -134,9 +102,8 @@ size_t arr_cap(void* arr) {
     return *((size_t*)arr - 2);
 }
 
-void arr_append(void* ref_arr, void* val) {
-    // Übergabe der Referenz des Pointers (Pointer auf Pointer)
-    size_t* raw = (size_t*)(*(void**)ref_arr) - 3;
+void* arr_push(void* arr, void* val) {
+    size_t* raw = (size_t*)(void*)arr - 3;
     size_t len = raw[0];
     size_t cap = raw[1];
     size_t elemsize = raw[2];
@@ -148,16 +115,16 @@ void arr_append(void* ref_arr, void* val) {
         size_t new_cap = cap + 10;
         raw[1] = new_cap;      //calculate new capacity
         raw = realloc(raw, 3 * sizeof(size_t) + (new_cap * elemsize));
-        *(void**)ref_arr = (void*)&raw[3]; //Array-Pointer wird wieder auf richtigen Startpunkt gestellt
+        arr = (void*)&raw[3]; //Array-Pointer wird wieder auf richtigen Startpunkt gestellt
     } 
     
     char* new_item = (void*)&raw[3] + ((len-1) * elemsize);   //count 1 = index 0, count 2 = index 1 etc.
     memcpy(new_item, val, elemsize);
+    return arr;
 }
 
-void arr_pop(void* ref_arr, size_t idx) {
-    // Übergabe der Referenz des Pointers (Pointer auf Pointer)
-    size_t* raw = (size_t*)(*(void**)ref_arr) - 3;
+void arr_pop(void* arr, size_t idx) {
+    size_t* raw = (size_t*)(void*)arr - 3;
     size_t len = raw[0];
     //size_t cap = raw[1];
     size_t elemsize = raw[2];
@@ -171,10 +138,8 @@ void arr_pop(void* ref_arr, size_t idx) {
     raw[0] = len;
 }
 
-void arr_reduce(void* ref_arr) {
-    // Übergabe der Referenz des Pointers (Pointer auf Pointer)
-    size_t* raw = (size_t*)(*(void**)ref_arr) - 3;
-
+void* arr_reduce(void* arr) {
+    size_t* raw = (size_t*)(void*)arr - 3;
     size_t len = raw[0];
     size_t cap = raw[1];
     size_t elemsize = raw[2];
@@ -182,12 +147,13 @@ void arr_reduce(void* ref_arr) {
     if (len < cap) {
         raw[1] = len; //Kapazität auf Länge setzen
         raw = realloc(raw, 3 * sizeof(size_t) + (len * elemsize)); //Speicherbereich kürzen
-        *(void**)ref_arr = (void*)&raw[3]; //Array-Pointer wird wieder auf richtigen Startpunkt gestellt
+        arr = (void*)&raw[3]; //Array-Pointer wird wieder auf richtigen Startpunkt gestellt
     }
+    return arr;
 }
 
-void arr_free(void* ref_arr) {
-    size_t* raw = (size_t*)(*(void**)ref_arr) - 3;
+void arr_free(void* arr) {
+    size_t* raw = (size_t*)(void*)arr - 3;
     free(raw);
 }
 
@@ -337,4 +303,12 @@ float vec2_minDist(Vector2 p, Vector2 start_a, Vector2 end_a) {
 		dist = vec2_mag(vec2_sub(start_a_to_p, line_a));
 	}
 	return dist;
+}
+
+Vector2 vec2_random() {
+    float angle = (float) random_num(0, 100) / 100 * PI * 2;
+    float x = cosf(angle);
+    float y = sinf(angle);
+    
+    return (Vector2){x, y};
 }

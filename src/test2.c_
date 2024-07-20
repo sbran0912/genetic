@@ -1,0 +1,28 @@
+#include "lib_core.h"
+
+
+Vector2* createFood(size_t count) {
+    Vector2* result = dynarr_create(count, Vector2);
+    printf("cap: %lu len: %lu \n", dynarr_cap(result), dynarr_len(result));
+    return result;
+}
+
+void respawnFood(Vector2* food, size_t count) {
+    
+
+        for (size_t i = 0; i < count; i++) {
+            Vector2 pos = {random_num(1, 100), random_num(1, 100)};
+            dynarr_push(food, pos);
+            printf("cap: %lu len: %lu \n", dynarr_cap(food), dynarr_len(food));
+        }
+
+}
+
+
+int main() {
+
+    Vector2* test = createFood(5);
+    respawnFood(test, 100);
+    printf("pos-x: %f pos-y: %f\n", test[0].x, test[0].y);
+    return EXIT_SUCCESS;
+}

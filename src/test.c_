@@ -1,0 +1,48 @@
+#include "lib_core.h"
+
+int main() {
+    
+    int* numbers = dynarr_create(1, int);
+    int val0 = 10;
+    int val1 = 20;
+    int val2 = 30;
+
+    dynarr_push(numbers, val0);
+    dynarr_push(numbers, val1);
+    dynarr_push(numbers, val2);
+    for (int i = 0; i < dynarr_len(numbers); i++) {
+        printf("Val[%i], %i \n", i, numbers[i]);
+    }
+
+    dynarr_pop(numbers, 0);
+
+    for (int i = 0; i < dynarr_len(numbers); i++) {
+        printf("Nach Push(0) Val[%i], %i \n", i, numbers[i]);
+    }
+
+
+    /*
+    Vector2 test = vec2_random();
+    printf("%f %f \n", test.x, test.y);
+    */
+    /*
+        int num_src[3] = {10, 20, 30};
+        int num_dest[3] = {0, 0, 0};
+
+        memcpy(num_dest, num_src, sizeof(num_src)); 
+
+        printf("%d\n", num_dest[2]);   
+    */
+    /*
+    ListStr namen = lists_create(1);
+    lists_append(&namen, "xxxxxxxx");
+    lists_append(&namen, "Brandner");
+    //strcpy(namen.array[0], "Hubert");
+    namen.array[0][2] = 'm';
+    printf("%s \n", namen.array[0]);
+    printf("%s \n", namen.array[1]);
+    lists_free(&namen);    
+    */
+
+    return 0;
+}
